@@ -52,7 +52,7 @@ services:
     container_name: soundtoll_application
     restart: always
     environment:
-      - VIRTUAL_HOST=soundtoll.nl
+      - VIRTUAL_HOST=soundtoll.sd.di.knaw.nl
     links:
       - elastic
       - sont_mysql
