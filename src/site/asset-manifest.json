@@ -1,0 +1,57 @@
+{
+  "files": {
+    "main.css": "/static/css/main.19ea85ad.chunk.css",
+<<<<<<< HEAD
+    "main.js": "/static/js/main.df28c4ce.chunk.js",
+    "main.js.map": "/static/js/main.df28c4ce.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.088ea808.js",
+    "runtime-main.js.map": "/static/js/runtime-main.088ea808.js.map",
+    "static/css/2.9522b9fe.chunk.css": "/static/css/2.9522b9fe.chunk.css",
+    "static/js/2.fd5a0ffd.chunk.js": "/static/js/2.fd5a0ffd.chunk.js",
+    "static/js/2.fd5a0ffd.chunk.js.map": "/static/js/2.fd5a0ffd.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.21704de8041986f3a6357ae4872394a9.js": "/precache-manifest.21704de8041986f3a6357ae4872394a9.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/2.9522b9fe.chunk.css.map": "/static/css/2.9522b9fe.chunk.css.map",
+    "static/css/main.19ea85ad.chunk.css.map": "/static/css/main.19ea85ad.chunk.css.map",
+    "static/js/2.fd5a0ffd.chunk.js.LICENSE.txt": "/static/js/2.fd5a0ffd.chunk.js.LICENSE.txt",
+=======
+    "main.js": "/static/js/main.6ec0c39e.chunk.js",
+    "main.js.map": "/static/js/main.6ec0c39e.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.088ea808.js",
+    "runtime-main.js.map": "/static/js/runtime-main.088ea808.js.map",
+    "static/css/2.9522b9fe.chunk.css": "/static/css/2.9522b9fe.chunk.css",
+    "static/js/2.e1835a85.chunk.js": "/static/js/2.e1835a85.chunk.js",
+    "static/js/2.e1835a85.chunk.js.map": "/static/js/2.e1835a85.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.66d263fce5f3d28c01a5905bd38f6e6d.js": "/precache-manifest.66d263fce5f3d28c01a5905bd38f6e6d.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/2.9522b9fe.chunk.css.map": "/static/css/2.9522b9fe.chunk.css.map",
+    "static/css/main.19ea85ad.chunk.css.map": "/static/css/main.19ea85ad.chunk.css.map",
+    "static/js/2.e1835a85.chunk.js.LICENSE.txt": "/static/js/2.e1835a85.chunk.js.LICENSE.txt",
+>>>>>>> 2b605e94208e4d10c5d4a6c3a9972aabc7766c84
+    "static/media/Logo Breed Documentconversie Mooi Werk (2).jpg": "/static/media/Logo Breed Documentconversie Mooi Werk (2).973853fa.jpg",
+    "static/media/degrotezuidwesthoek.png": "/static/media/degrotezuidwesthoek.084d2d9e.png",
+    "static/media/hendrikmullerfonds.jpg": "/static/media/hendrikmullerfonds.cafe50c7.jpg",
+    "static/media/koftegel.jpg": "/static/media/koftegel.c19c78e9.jpg",
+    "static/media/logo-blue-huygens.svg": "/static/media/logo-blue-huygens.a021c5b5.svg",
+    "static/media/logo_nwo.jpg": "/static/media/logo_nwo.a3231159.jpg",
+    "static/media/logo_rug.jpg": "/static/media/logo_rug.38c1b323.jpg",
+    "static/media/smf_logo_compact.jpg": "/static/media/smf_logo_compact.3f2f031d.jpg",
+    "static/media/statens_arkiver.jpg": "/static/media/statens_arkiver.a4a6ceb5.jpg",
+    "static/media/tresoar.jpg": "/static/media/tresoar.0ed1beda.jpg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.088ea808.js",
+    "static/css/2.9522b9fe.chunk.css",
+<<<<<<< HEAD
+    "static/js/2.fd5a0ffd.chunk.js",
+    "static/css/main.19ea85ad.chunk.css",
+    "static/js/main.df28c4ce.chunk.js"
+=======
+    "static/js/2.e1835a85.chunk.js",
+    "static/css/main.19ea85ad.chunk.css",
+    "static/js/main.6ec0c39e.chunk.js"
+>>>>>>> 2b605e94208e4d10c5d4a6c3a9972aabc7766c84
+  ]
+}
