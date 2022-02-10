@@ -34,9 +34,23 @@ switch ($page) {
             throw_error("Too little parameters");
         }
         break;
+    case "big_regions":
+        if (isset($segments[3]) && isset($segments[4])) {
+            big_regions($segments[3], $segments[4]);
+        } else {
+            throw_error("Too little parameters");
+        }
+        break;
+    case "small_regions":
+        if (isset($segments[3]) && isset($segments[4])) {
+            small_regions($segments[3], $segments[4]);
+        } else {
+            throw_error("Too little parameters");
+        }
+        break;
     case "map_places":
-        if (isset($segments[3])) {
-            map_places($segments[3]);
+        if (isset($_GET["q"])) {
+            map_places($_GET["q"]);
         } else {
             throw_error();
         }
@@ -97,10 +111,10 @@ switch ($page) {
     case "currency":
         currency();
         break;
-    case "small_regions":
+    case "small_regions_facets":
         get_regions("small");
         break;
-    case "big_regions":
+    case "big_regions_facets":
         get_regions("big");
         break;
     case "elastic":

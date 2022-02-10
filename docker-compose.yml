@@ -10,7 +10,7 @@ networks:
 
 services:
   elastic:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.5.2
+    image: registry.diginfra.net/elasticsearch:7.5.2-patched
     container_name: soundtoll_es
     restart: always
     environment:
@@ -24,26 +24,6 @@ services:
       - /data/docker/volumes/sont_es/_data:/usr/share/elasticsearch/data
       - /home/robz:/home
 
-  sont_mysql:
-    image: mysql:5.7
-    container_name: soundtoll_mysql
-    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci --init-connect='SET NAMES UTF8;' --innodb-flush-log-at-trx-commit=0
-    restart: always
-    expose:
-      - 3306
-    environment:
-      MYSQL_USER: user
-      MYSQL_PASSWORD: user
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: default_schema
-      VIRTUAL_PORT: 3306
-    volumes:
-      - /data/docker/volumes/sont_db/_data/mysql:/var/lib/mysql
-      - /home/robz:/home
-    ports:
-      - 3306:3306
-    networks:
-      - soundtoll
 
   sont:
     build:
@@ -52,7 +32,7 @@ services:
     container_name: soundtoll_application
     restart: always
     environment:
-      - VIRTUAL_HOST=soundtoll.sd.di.huc.knaw.nl
+      - VIRTUAL_HOST=sont.sd.di.huc.knaw.nl
     links:
       - elastic
       - sont_mysql

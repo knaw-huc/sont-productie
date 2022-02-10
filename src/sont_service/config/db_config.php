@@ -1,5 +1,5 @@
 <?php
-define('DB_SERVER', 'sont_mysql');
-define('DB_USER', 'root');
-define('DB_PASSWD', 'root');
+define('DB_SERVER', 'mysql-master.diginfra.net');
+define('DB_USER', 'soundtoll');
+define('DB_PASSWD', 'jSY9aMenaJJr7BHUNHArEYrw');
 define('DB_NAME', 'soundtoll');

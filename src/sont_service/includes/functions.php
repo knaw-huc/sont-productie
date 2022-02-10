@@ -53,9 +53,20 @@ function places($letter, $port) {
     send_json($db->places($letter, $port));
 }
 
-function map_places($codedStruc) {
+function big_regions($region, $port) {
     global $db;
 
+    send_json($db->big_regions($region, $port));
+}
+
+function small_regions($region, $port) {
+    global $db;
+
+    send_json($db->small_regions($region, $port));
+}
+
+function map_places($codedStruc) {
+    global $db;
     send_json($db->get_map_places($codedStruc));
 }
 
@@ -96,7 +107,7 @@ function get_regions($size = "big") {
 
 function search($codedStruc) {
     $json_struc = parse_codedStruc($codedStruc);
-    error_log($json_struc);
+    //error_log($json_struc);
     $send_back = array();
     $result = elastic($json_struc);
     $send_back["amount"] = $result["hits"]["total"]["value"];
@@ -132,8 +143,9 @@ function buildQuery($queryArray, $from, $sortOrder) {
     $terms = array();
 
     foreach($queryArray["searchvalues"] as $item) {
+
         if (strpos($item["field"], '.')) {
-            if (strpos($item["field"], 'FREE_TEXT:') == 0) {
+            if (strpos($item["field"], 'FREE_TEXT:') !== false) {
                 get_nested_free_texts($item["field"], makeItems($item["values"]), $terms);
             } else {
                 $fieldArray = explode(".", $item["field"]);
@@ -176,7 +188,6 @@ function matchTemplate($term, $value) {
 
 function get_ft_matches($values, $field) {
     $valArr = explode(",", $values);
-    //error_log(print_r($valArr, true));
     $lengte = count($valArr);
     switch ($lengte) {
         case 0:
@@ -205,7 +216,7 @@ function yearValues($range)
 function nestedTemplate($fieldArray, $value) {
     $path = $fieldArray[0];
     $field = implode(".", $fieldArray);
-    return "{\"nested\": {\"path\": \"$path\",\"query\": {\"bool\": {\"must\": [{\"terms\": {\"$field.raw\": [\"$value\"]}}]}}}}";
+    return "{\"nested\": {\"path\": \"$path\",\"query\": {\"bool\": {\"must\": [{\"terms\": {\"$field.raw\": [\"{$value[0]}\"]}}]}}}}";
 }
 
 function queryTemplate($terms, $from, $sortOrder) {
