@@ -35,7 +35,6 @@ services:
       - VIRTUAL_HOST=sont.sd.di.huc.knaw.nl
     links:
       - elastic
-      - sont_mysql
     volumes:
       - /home/robz:/home
     networks:
