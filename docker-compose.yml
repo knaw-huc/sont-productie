@@ -4,6 +4,9 @@ networks:
   sont_network:
     external:
       name: nginxproxynetwork
+  soundtoll:
+    external:
+      name: soundtoll_default
 
 services:
   elastic:
@@ -35,3 +38,4 @@ services:
       - /home/robz:/home
     networks:
       - sont_network
+      - soundtoll
