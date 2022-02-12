@@ -4,9 +4,6 @@ networks:
   sont_network:
     external:
       name: nginxproxynetwork
-  soundtoll:
-    external:
-      name: soundtoll_default
 
 services:
   elastic:
@@ -15,7 +12,6 @@ services:
     restart: always
     environment:
       - discovery.type=single-node
-      - ES_JAVA_OPTS=-Dlog4j2.formatMsgNoLookups=true
     expose:
       - 9200
     networks:
@@ -32,11 +28,10 @@ services:
     container_name: soundtoll_application
     restart: always
     environment:
-      - VIRTUAL_HOST=sont.sd.di.huc.knaw.nl
+      - VIRTUAL_HOST=soundtoll.sd.di.huc.knaw.nl
     links:
       - elastic
     volumes:
       - /home/robz:/home
     networks:
       - sont_network
-      - soundtoll
