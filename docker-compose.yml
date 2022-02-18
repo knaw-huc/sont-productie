@@ -17,6 +17,7 @@ services:
     networks:
       - sont_network
     volumes:
+      - /data/docker/volumes/sont_es/_data:/usr/share/elasticsearch/data
       - /home/robz:/home
 
 
@@ -27,7 +28,7 @@ services:
     container_name: soundtoll_application
     restart: always
     environment:
-      - VIRTUAL_HOST=soundtoll.sd.di.huc.knaw.nl
+      - VIRTUAL_HOST=acceptatie.soundtoll.nl
     links:
       - elastic
     volumes:
