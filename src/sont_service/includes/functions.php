@@ -24,6 +24,7 @@ function passage($id) {
 
     if ($db->isPassage($id)) {
         send_json($db->passage($id));
+        //print_r($db->passage($id));
     } else {
         throw_error("Passage does not exist!");
     }
