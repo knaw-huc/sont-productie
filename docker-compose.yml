@@ -7,7 +7,7 @@ networks:
 
 services:
   elastic:
-    image: registry.diginfra.net/elasticsearch:7.5.2-patched
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
     container_name: soundtoll_es
     restart: always
     environment:
@@ -17,21 +17,39 @@ services:
     networks:
       - sont_network
     volumes:
-      - /data/docker/volumes/sont_es/_data:/usr/share/elasticsearch/data
+      - sont_es:/usr/share/elasticsearch/data
       - /home/robz:/home
 
+  sont-db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: bonzo
+      MYSQL_DATABASE: soundtoll
+      MYSQL_USER: soundtoll
+      MYSQL_PASSWORD: s0undt0ll
+    restart: always
+    volumes:
+      - sont_db:/var/lib/mysql
+      - /home/robz:/home
+    networks:
+      - sont_network
 
   sont:
-    build:
-      context: ./
-      dockerfile: Dockerfile
+    image: registry.diginfra.net/tsd/sont-app:1.2
     container_name: soundtoll_application
     restart: always
     environment:
-      - VIRTUAL_HOST=acceptatie.soundtoll.nl
+      - VIRTUAL_HOST=soundtoll.nl
+      - REACT_APP_SERVICE_SERVER=https://www.soundtoll.nl/sont_service/
+      - REACT_APP_HOME=https://https://www.soundtoll.nl
+      - MYSQL_DB_USER=soundtoll
+      - MYSQL_DB_PW=s0undt0ll
     links:
       - elastic
+      - sont-db
     volumes:
       - /home/robz:/home
+      - /data/soundtoll/Jpg:/var/www/html/scans
+      - sont_data:/var/www/html/data
     networks:
       - sont_network

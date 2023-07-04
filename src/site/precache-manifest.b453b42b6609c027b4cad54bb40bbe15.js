@@ -1,27 +1,27 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "0feda9a2e7831d4c8c174fe8c004854b",
+    "revision": "77def6d3245410afd61b30f70dfdf156",
     "url": "/index.html"
   },
   {
-    "revision": "958bc1b7f7d2e1c46a3b",
+    "revision": "2385320a05d2c36f42c2",
     "url": "/static/css/2.9522b9fe.chunk.css"
   },
   {
-    "revision": "7a7f6884ecd41979ffdb",
-    "url": "/static/css/main.19ea85ad.chunk.css"
+    "revision": "0102f42c68097690cf31",
+    "url": "/static/css/main.a55f6424.chunk.css"
   },
   {
-    "revision": "958bc1b7f7d2e1c46a3b",
-    "url": "/static/js/2.9a8fb22e.chunk.js"
+    "revision": "2385320a05d2c36f42c2",
+    "url": "/static/js/2.8b922c74.chunk.js"
   },
   {
     "revision": "3adb047db28e90b905c7d499b8d43358",
-    "url": "/static/js/2.9a8fb22e.chunk.js.LICENSE.txt"
+    "url": "/static/js/2.8b922c74.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "7a7f6884ecd41979ffdb",
-    "url": "/static/js/main.99d97bb9.chunk.js"
+    "revision": "0102f42c68097690cf31",
+    "url": "/static/js/main.ce8caf08.chunk.js"
   },
   {
     "revision": "8930cd06f19615ef72ea",
@@ -44,8 +44,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/media/koftegel.c19c78e9.jpg"
   },
   {
-    "revision": "a021c5b54aa238b3207773a3412f0238",
-    "url": "/static/media/logo-blue-huygens.a021c5b5.svg"
+    "revision": "a656f9d7e08ff0d58e0fcb3fa4d252d0",
+    "url": "/static/media/logo-blue-huygens.a656f9d7.svg"
   },
   {
     "revision": "a3231159cd3d6468cd293a7f3f7db932",

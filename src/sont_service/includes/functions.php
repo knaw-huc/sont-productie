@@ -19,12 +19,59 @@ function map_info($code) {
     send_json($db->getMapInfo($code));
 }
 
+function download_table($name, $query) {
+    global $db;
+
+    $struc = json_decode(base64_decode($query), true);
+    $page = 1;
+    $struc["page"] = $page;
+    $queryStr = base64_encode(json_encode($struc));
+    header("Content-Type: text/csv charset=utf-8");
+    header("Content-Disposition: attachment; filename=$name.csv");
+    $results = search($queryStr, true);
+    $ids = create_query_conditions($results["passages"]);
+    $rows = $db->get_table($name, $ids);
+    $set = $rows["data"];
+    $keys = array_keys($set[0]);
+    $fp = fopen('php://output', 'wb');
+    fputcsv($fp,$keys);
+    $goOn = true;
+
+    while ($goOn) {
+        foreach ($set as $line) {
+            fputcsv($fp, $line);
+        }
+
+        $page++;
+        $struc["page"] = $page;
+        $queryStr = base64_encode(json_encode($struc));
+        $results = search($queryStr, true);
+        $ids = create_query_conditions($results["passages"]);
+        if ($ids == '') {
+            $goOn = false;
+        } else {
+            $rows = $db->get_table($name, $ids);
+            $set = $rows["data"];
+        }
+    }
+
+    fclose($fp);
+}
+
+
+function create_query_conditions($ids) {
+    $retArray = array();
+    foreach ($ids as $item) {
+        $retArray[] = $item["id_doorvaart"];
+    }
+    return implode(",", $retArray);
+}
+
 function passage($id) {
     global $db;
 
     if ($db->isPassage($id)) {
         send_json($db->passage($id));
-        //print_r($db->passage($id));
     } else {
         throw_error("Passage does not exist!");
     }
@@ -83,7 +130,6 @@ function commodities($letter) {
 
 function elastic($json_struc) {
     $options = array('Content-type: application/json', 'Content-Length: ' . strlen($json_struc));
-    //error_log($json_struc);
     $ch = curl_init(ELASTIC_HOST);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $options);
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
@@ -106,41 +152,54 @@ function get_regions($size = "big") {
     send_json(array("regions" => $results["data"]));
 }
 
-function search($codedStruc) {
-    $json_struc = parse_codedStruc($codedStruc);
-    //error_log($json_struc);
+function search($codedStruc, $download = false) {
+    $json_struc = parse_codedStruc($codedStruc, $download);
     $send_back = array();
     $result = elastic($json_struc);
     $send_back["amount"] = $result["hits"]["total"]["value"];
-    $send_back["pages"] = ceil($result["hits"]["total"]["value"] / PAGE_LENGTH);
+    if ($download) {
+        $send_back["pages"] = ceil($result["hits"]["total"]["value"] / DOWNLOAD_PAGE_LENGTH);
+    } else {
+        $send_back["pages"] = ceil($result["hits"]["total"]["value"] / PAGE_LENGTH);
+    }
+
     $send_back["passages"] = array();
     foreach ($result["hits"]["hits"] as $passage) {
         $send_back["passages"][] = $passage["_source"];
     }
-    send_json($send_back);
+    if ($download) {
+        return $send_back;
+    } else {
+        send_json($send_back);
+    }
 }
 
-function parse_codedStruc($codedStruc) {
+function parse_codedStruc($codedStruc, $download) {
     $queryArray = json_decode(base64_decode($codedStruc), true);
-    $from = ($queryArray["page"] - 1) * PAGE_LENGTH;
+    if ($download) {
+        $from = ($queryArray["page"] - 1) * DOWNLOAD_PAGE_LENGTH;
+    } else {
+        $from = ($queryArray["page"] - 1) * PAGE_LENGTH;
+    }
+
     $sortOrder = $queryArray["sortorder"];
     $sortElements = explode(';', $sortOrder);
     $sortField = $sortElements[0];
     $sortAscDesc = $sortElements[1];
     if ($queryArray["searchvalues"] == "none") {
-        if ($sortField == "jaar") {
-            $json_struc = "{ \"query\": {\"match_all\": {}}, \"size\": 100, \"from\": $from, \"_source\": [\"id_doorvaart\", \"type\", \"schipper_achternaam\", \"schipper_naam\", \"schipper_patroniem\" , \"dag\", \"maand\", \"jaar\", \"schipper_plaatsnaam\", \"van_eerste\", \"naar_eerste\"], \"sort\": [{ \"jaar\": {\"order\":\"$sortAscDesc\"}}, { \"maand\": {\"order\":\"$sortAscDesc\"}}, { \"dag\": {\"order\":\"$sortAscDesc\"}}]}";
-        } else {
-            $json_struc = "{ \"query\": {\"match_all\": {}}, \"size\": 100, \"from\": $from, \"_source\": [\"id_doorvaart\", \"type\", \"schipper_achternaam\", \"schipper_naam\", \"schipper_patroniem\" , \"dag\", \"maand\", \"jaar\", \"schipper_plaatsnaam\", \"van_eerste\", \"naar_eerste\"], \"sort\": [{ \"$sortField\": {\"order\":\"$sortAscDesc\"}}]}";
-        }
+        //if ($sortField == "jaar") {
+        //    $json_struc = "{ \"query\": {\"match_all\": {}}, \"size\": 100, \"from\": $from, \"_source\": [\"id_doorvaart\", \"type\", \"schipper_achternaam\", \"schipper_naam\", \"schipper_patroniem\" , \"dag\", \"maand\", \"jaar\", \"schipper_plaatsnaam\", \"van_eerste\", \"naar_eerste\"], \"sort\": [{ \"jaar\": {\"order\":\"$sortAscDesc\"}}, { \"maand\": {\"order\":\"$sortAscDesc\"}}, { \"dag\": {\"order\":\"$sortAscDesc\"}}]}";
+        //} else {
+            $json_struc = "{ \"query\": {\"match_all\": {}}, \"size\": 100, \"from\": $from, \"_source\": [\"id_doorvaart\", \"type\", \"schipper_achternaam\", \"schipper_naam\", \"schipper_voornamen\",  \"schipper_tussenvoegsel\", \"schipper_patroniem\" , \"dag\", \"maand\", \"jaar\", \"schipper_plaatsnaam\", \"van_eerste\", \"naar_eerste\"], \"sort\": [{ \"$sortField\": {\"order\":\"$sortAscDesc\"}}]}";
+        //}
 
     } else {
-        $json_struc = buildQuery($queryArray, $from, $sortOrder);
+        $json_struc = buildQuery($queryArray, $from, $sortOrder, $download);
     }
     return $json_struc;
 }
 
-function buildQuery($queryArray, $from, $sortOrder) {
+function buildQuery($queryArray, $from, $sortOrder, $download) {
     $terms = array();
 
     foreach($queryArray["searchvalues"] as $item) {
@@ -157,7 +216,7 @@ function buildQuery($queryArray, $from, $sortOrder) {
         }
 
     }
-    return queryTemplate(implode(",", $terms), $from, $sortOrder);
+    return queryTemplate(implode(",", $terms), $from, $sortOrder, $download);
 }
 
 function get_nested_free_texts($entry, $values, &$terms) {
@@ -183,24 +242,29 @@ function matchTemplate($term, $value) {
         case "jaar":
             return "{\"terms\": {\"jaar\": [$value]}}";
         default:
-            return "{\"terms\": {\"$term.raw\": [\"$value\"]}}";
+            return "{\"match\": {\"$term.raw\": \"$value\"}}";
     }
 }
 
 function get_ft_matches($values, $field) {
     $valArr = explode(",", $values);
     $lengte = count($valArr);
+    if ($field == "fulltext") {
+        $sField = $field;
+    } else {
+        $sField = $field .".raw";
+    }
     switch ($lengte) {
         case 0:
             return "";
         case 1:
-            $val = strtolower(trim($valArr[0]));
-            return "{\"wildcard\": {\"$field\": {\"value\": \"$val\"}}}";
+            $val = str_replace("-", "\\\\-", trim($valArr[0]));
+            return "{\"wildcard\": {\"$sField\": {\"value\": \"$val\", \"case_insensitive\": true}}}";
         default:
             $retArr = array();
             foreach ($valArr as $value) {
-                $val = strtolower(trim($value));
-                $retArr[] = "{\"wildcard\": {\"$field\": {\"value\": \"$val\"}}}";
+                $val = str_replace("-", "\\\\-", trim($value));
+                $retArr[] = "{\"wildcard\": {\"$sField\": {\"value\": \"$val\", \"case_insensitive\": true}}}";
             }
             return implode(",", $retArr);
     }
@@ -220,15 +284,20 @@ function nestedTemplate($fieldArray, $value) {
     return "{\"nested\": {\"path\": \"$path\",\"query\": {\"bool\": {\"must\": [{\"terms\": {\"$field.raw\": [\"{$value[0]}\"]}}]}}}}";
 }
 
-function queryTemplate($terms, $from, $sortOrder) {
+function queryTemplate($terms, $from, $sortOrder, $download) {
     $sortElements = explode(";", $sortOrder);
     $sortField = $sortElements[0];
     $sortAscDesc = $sortElements[1];
-    if ($sortField == "jaar") {
-        return "{ \"query\": { \"bool\": { \"must\": [ $terms ] } }, \"size\": 100, \"from\": $from, \"_source\": [\"id_doorvaart\", \"type\", \"schipper_achternaam\", \"schipper_naam\", \"schipper_patroniem\" ,\"dag\",\"maand\",\"jaar\", \"schipper_plaatsnaam\", \"van_eerste\", \"naar_eerste\"], \"sort\": [ { \"jaar\": {\"order\":\"$sortAscDesc\"}}, { \"maand\": {\"order\":\"$sortAscDesc\"}}, { \"dag\": {\"order\":\"$sortAscDesc\"}} ] }";
+    //if ($sortField == "jaar") {
+    //    return "{ \"query\": { \"bool\": { \"must\": [ $terms ] } }, \"size\": 100, \"from\": $from, \"_source\": [\"id_doorvaart\", \"type\", \"schipper_achternaam\", \"schipper_naam\", \"schipper_patroniem\" ,\"dag\",\"maand\",\"jaar\", \"schipper_plaatsnaam\", \"van_eerste\", \"naar_eerste\"], \"sort\": [ { \"jaar\": {\"order\":\"$sortAscDesc\"}}, { \"maand\": {\"order\":\"$sortAscDesc\"}}, { \"dag\": {\"order\":\"$sortAscDesc\"}} ] }";
+    //} else {
+    if ($download) {
+        return "{ \"query\": { \"bool\": { \"must\": [ $terms ] } }, \"size\": 500, \"from\": $from, \"_source\": [\"id_doorvaart\"] }";
     } else {
-        return "{ \"query\": { \"bool\": { \"must\": [ $terms ] } }, \"size\": 100, \"from\": $from, \"_source\": [\"id_doorvaart\", \"type\", \"schipper_achternaam\", \"schipper_naam\", \"schipper_patroniem\" ,\"dag\",\"maand\",\"jaar\", \"schipper_plaatsnaam\", \"van_eerste\", \"naar_eerste\"], \"sort\": [ { \"$sortField\": {\"order\":\"$sortAscDesc\"}} ] }";
+        return "{ \"query\": { \"bool\": { \"must\": [ $terms ] } }, \"size\": 100, \"from\": $from, \"_source\": [\"id_doorvaart\", \"type\", \"schipper_achternaam\", \"schipper_naam\", \"schipper_voornamen\", \"schipper_tussenvoegsel\", \"schipper_patroniem\" ,\"dag\",\"maand\",\"jaar\", \"schipper_plaatsnaam\", \"van_eerste\", \"naar_eerste\"], \"sort\": [ { \"$sortField\": {\"order\":\"$sortAscDesc\"}} ] }";
     }
+
+    //}
 
 }
 
@@ -236,7 +305,7 @@ function makeItems($termArray) {
     $retArray = array();
 
     foreach($termArray as $term) {
-        //$retArray[] = "\"" . $term . "\"";
+        //$retArray[] = strtolower($term);
         $retArray[] = $term;
     }
     return implode(", ", $retArray);

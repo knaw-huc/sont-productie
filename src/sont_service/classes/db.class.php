@@ -17,6 +17,11 @@ class db
         return $this->ass_arr($results);
     }
 
+    function get_table($table, $ids) {
+        $results = $this->con->query("SELECT * FROM $table WHERE id_doorvaart IN ($ids)");
+        return $this->ass_arr($results);
+    }
+
     function years()
     {
         $results = $this->con->query("SELECT DISTINCT rolnr AS film FROM secties_totaal");
@@ -141,7 +146,7 @@ class db
             $tail = $this->addTail($commodity, $port);
             $query .= $tail;
         }
-        error_log($query);
+
         return $this->ass_arr($this->con->query($query));
     }
 
@@ -309,7 +314,7 @@ class db
 
     private function getScanURL($scan) {
         $parts = explode("_", $scan);
-        return SCAN_HOST . strtolower($parts[0] . "/" . $scan);
+        return SCAN_HOST . $parts[0] . "/" . $scan;
     }
 
     private function getIIIF($scan) {

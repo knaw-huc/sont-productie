@@ -4,6 +4,8 @@ require(dirname(__FILE__) . '/config/db_config.php');
 require(dirname(__FILE__) . '/classes/db.class.php');
 require(dirname(__FILE__) . '/includes/functions.php');
 
+error_reporting(0);
+
 $URI = $_SERVER["REQUEST_URI"];
 
 $segments = explode('/', $URI);
@@ -19,6 +21,13 @@ switch ($page) {
         break;
     case "years":
         years();
+        break;
+    case "download_results":
+        if (isset($_GET["name"]) && isset($_GET["q"])) {
+            download_table($_GET["name"], $_GET["q"]);
+        } else {
+            throw_error();
+        }
         break;
     case "passage":
         if (isset($segments[3])) {
