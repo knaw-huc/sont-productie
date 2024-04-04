@@ -206,7 +206,7 @@ function buildQuery($queryArray, $from, $sortOrder, $download) {
 
         if (strpos($item["field"], '.')) {
             if (strpos($item["field"], 'FREE_TEXT:') !== false) {
-                get_nested_free_texts($item["field"], makeItems($item["values"]), $terms);
+                get_nested_free_texts($item["field"], $item["values"], $terms);
             } else {
                 $fieldArray = explode(".", $item["field"]);
                 $terms[] = nestedTemplate($fieldArray, $item["values"]);
@@ -224,7 +224,10 @@ function get_nested_free_texts($entry, $values, &$terms) {
     $field = $components[1];
     $path = explode(".", $field);
     $path = $path[0];
-        $terms[] = "{\"nested\": {\"path\": \"$path\", \"query\": {\"wildcard\": {\"$field\": {\"value\": \"$values\"}}}}}";
+    foreach($values as $val) {
+        $terms[] = "{\"nested\": {\"path\": \"$path\", \"query\": {\"wildcard\": {\"$field\": {\"value\": \"$val\"}}}}}";
+    }
+
 }
 
 function matchTemplate($term, $value) {
@@ -252,7 +255,8 @@ function get_ft_matches($values, $field) {
     if ($field == "fulltext") {
         $sField = $field;
     } else {
-        $sField = $field .".raw";
+        //$sField = $field .".raw";
+        $sField = $field;
     }
     switch ($lengte) {
         case 0:
